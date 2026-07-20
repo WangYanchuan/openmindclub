@@ -71,7 +71,7 @@ echo "==> 5/5 更新 cask 文件"
 sed -i '' \
   -e "s/version \".*\"/version \"${VERSION}\"/" \
   -e "s/sha256 \".*\"/sha256 \"${SHA}\"/" \
-  -e "s#github.com/[^/]*/openmindclub-mac#github.com/${GH_USER}/openmindclub-mac#" \
+  -e "s#github.com/[^/]*/openmindclub#github.com/${GH_USER}/openmindclub#" \
   "$CASK"
 
 echo ""
