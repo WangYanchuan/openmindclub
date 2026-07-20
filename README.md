@@ -1,32 +1,81 @@
-# 开智元学 for macOS
+# 开智元学 macOS 壳应用
 
-给 [开智元学学习系统](https://m.openmindclub.com/) 做的原生 macOS 壳应用（Swift + WKWebView）。
-独立窗口、自定义图标、记住登录状态。
+一个用原生 macOS 技术（Swift + AppKit + WKWebView）封装的桌面端应用，打开即访问 [https://m.openmindclub.com/](https://m.openmindclub.com/)。
 
-> 非官方项目，仅为方便自己在 Mac 上快速打开该网站。
+> 注意：本仓库仅提供封装，不拥有原网站内容。应用本质是一个「壳」，体验接近原生 App。
 
-## 从源码构建
+## 特性
 
-需要 Xcode 命令行工具（`swiftc` / `iconutil` / `sips`）。
+- 原生 macOS 应用（`.app`），可放入「应用程序」文件夹或 Dock
+- 使用 WKWebView 加载移动端页面，窗口尺寸针对手机版优化
+- 支持持久化 Cookie，登录状态会被记住
+- 应用菜单：刷新、前进/后退、回到首页、复制/粘贴/全选
+- 支持触控板双指返回/前进手势
 
-```bash
-./package.sh <版本号> <你的GitHub用户名>
-# 例：./package.sh 1.0 wangyanchuan
+## 项目结构
+
+```
+.
+├── main.swift       # 应用主程序源码
+├── makeicon.swift   # 生成 App 图标（1024 → .icns）
+├── package.sh       # 一键编译、打包、更新 Homebrew cask
+├── build/           # 编译产物（.app 和 .icns）
+├── release/         # 发布的 zip 包
+└── homebrew-tap/    # Homebrew tap 源文件（cask 描述）
 ```
 
-脚本会：编译主程序 → 生成图标 → 组装 `开智元学.app` → 打包 zip → 计算 sha256。
-产物在 `build/`（app）和 `release/`（zip）。
+## 环境要求
 
-## 通过 Homebrew 安装
+- macOS 14+（ Sonoma ）
+- Xcode Command Line Tools 或 Swift 工具链
 
-见 tap 仓库：`homebrew-tap`。
+## 手动编译
 
 ```bash
-brew tap <你的GitHub用户名>/tap
+swiftc main.swift -o build/openmindclub -framework Cocoa -framework WebKit -O
+```
+
+然后执行 `package.sh` 完成图标生成和 `.app` 组装：
+
+```bash
+./package.sh 1.0 WangYanchuan
+```
+
+## 打包并发布（Homebrew）
+
+```bash
+./package.sh 1.0 WangYanchuan
+```
+
+脚本会：
+
+1. 编译主程序
+2. 生成图标 `.icns`
+3. 组装 `.app`
+4. 用 `ditto` 打包成 `release/OpenMindClub-<版本>.zip`
+5. 计算 `sha256` 并自动回填到 `homebrew-tap/Casks/openmindclub.rb`
+
+之后：
+
+1. 将 `release/OpenMindClub-<版本>.zip` 上传到本仓库的 GitHub Release（tag 如 `v1.0`）。
+2. 提交并推送 `homebrew-tap/` 目录到 `homebrew-tap` 仓库。
+
+用户即可安装：
+
+```bash
+brew tap WangYanchuan/tap
 brew install --cask openmindclub
 ```
 
-## 说明
+## 首次打开注意事项
 
-- 应用未做 Apple 签名，首次打开需在「系统设置 → 隐私与安全性 → 仍要打开」放行。
-- 本质是网站的 WebView 封装，网站改版或不可访问时应用同样受影响。
+应用未做 Apple 代码签名，首次打开可能会被 Gatekeeper 拦截。请前往：
+
+**系统设置 → 隐私与安全性 → 安全性** 中点击 **仍要打开**。
+
+## 更新版本
+
+1. 修改 `main.swift` 或图标后，运行 `./package.sh <新版本> WangYanchuan`
+2. 上传新的 zip 到 GitHub Release
+3. 推送更新后的 `homebrew-tap/Casks/openmindclub.rb`
+4. 用户运行 `brew upgrade --cask openmindclub`
