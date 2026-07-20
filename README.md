@@ -21,7 +21,7 @@
 ├── package.sh       # 一键编译、打包、更新 Homebrew cask
 ├── build/           # 编译产物（.app 和 .icns）
 ├── release/         # 发布的 zip 包
-└── homebrew-tap/    # Homebrew tap 源文件（cask 描述）
+└── homebrew-openmindclub/    # Homebrew tap 源文件（cask 描述）
 ```
 
 ## 环境要求
@@ -53,17 +53,17 @@ swiftc main.swift -o build/openmindclub -framework Cocoa -framework WebKit -O
 2. 生成图标 `.icns`
 3. 组装 `.app`
 4. 用 `ditto` 打包成 `release/OpenMindClub-<版本>.zip`
-5. 计算 `sha256` 并自动回填到 `homebrew-tap/Casks/openmindclub.rb`
+5. 计算 `sha256` 并自动回填到 `homebrew-openmindclub/Casks/openmindclub.rb`
 
 之后：
 
 1. 将 `release/OpenMindClub-<版本>.zip` 上传到本仓库的 GitHub Release（tag 如 `v1.0`）。
-2. 提交并推送 `homebrew-tap/` 目录到 `homebrew-tap` 仓库。
+2. 提交并推送 `homebrew-openmindclub/` 目录到 `homebrew-openmindclub` 仓库。
 
 用户即可安装：
 
 ```bash
-brew tap WangYanchuan/tap
+brew tap WangYanchuan/openmindclub
 brew install --cask openmindclub
 ```
 
@@ -77,5 +77,5 @@ brew install --cask openmindclub
 
 1. 修改 `main.swift` 或图标后，运行 `./package.sh <新版本> WangYanchuan`
 2. 上传新的 zip 到 GitHub Release
-3. 推送更新后的 `homebrew-tap/Casks/openmindclub.rb`
+3. 推送更新后的 `homebrew-openmindclub/Casks/openmindclub.rb`
 4. 用户运行 `brew upgrade --cask openmindclub`
